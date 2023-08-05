@@ -1,0 +1,35 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Read the CSV file into a pandas DataFrame
+data = pd.read_csv("student_scores.csv")
+
+# Calculate total score and average score for each student
+data["Total"] = data["Math"] + data["Science"] + data["History"]
+data["Average"] = data[["Math", "Science", "History"]].mean(axis=1)
+
+# Performance comparison across subjects for each student
+for index, row in data.iterrows():
+    plt.figure()
+    plt.bar(row.index[1:4], row[1:4])
+    plt.title(f"{row['Name']} - Performance across Subjects")
+    plt.xlabel("Subjects")
+    plt.ylabel("Scores")
+    plt.show()
+
+# Overall class performance summary
+plt.figure()
+data["Total"].plot(kind="bar")
+plt.title("Overall Class Performance Summary")
+plt.xlabel("Students")
+plt.ylabel("Total Score")
+plt.show()
+
+# Subject-wise class performance summary
+subject_avg = data[["Math", "Science", "History"]].mean()
+plt.figure()
+subject_avg.plot(kind="bar")
+plt.title("Subject-wise Class Performance Summary")
+plt.xlabel("Subjects")
+plt.ylabel("Average Score")
+plt.show()

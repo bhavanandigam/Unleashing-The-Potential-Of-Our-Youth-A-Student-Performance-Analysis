@@ -1,0 +1,79 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Read the student scores data from the CSV file
+student_data = pd.read_csv("student_scores.csv")
+
+# Read the parental survey data from the CSV file
+parent_survey_data = pd.read_csv("parent_survey.csv")
+
+# Read the teacher survey data from the CSV file
+teacher_survey_data = pd.read_csv("teacher_survey.csv")
+
+# Calculate total score and average score for each student
+student_data["Total"] = student_data["Math"] + student_data["Science"] + student_data["History"]
+student_data["Average"] = student_data[["Math", "Science", "History"]].mean(axis=1)
+
+# Merge student data with parental survey data
+merged_data = pd.merge(student_data, parent_survey_data, on="Name")
+
+# Merge student data with teacher survey data
+merged_data = pd.merge(merged_data, teacher_survey_data, on="Name")
+
+# Performance comparison across subjects for each student
+for index, row in merged_data.iterrows():
+    plt.figure()
+    plt.bar(row.index[1:4], row[1:4])
+    plt.title(f"{row['Name']} - Performance across Subjects")
+    plt.xlabel("Subjects")
+    plt.ylabel("Scores")
+    plt.show()
+
+# Overall class performance summary
+plt.figure()
+student_data["Total"].plot(kind="bar")
+plt.title("Overall Class Performance Summary")
+plt.xlabel("Students")
+plt.ylabel("Total Score")
+plt.show()
+
+# Subject-wise class performance summary
+subject_avg = student_data[["Math", "Science", "History"]].mean()
+plt.figure()
+subject_avg.plot(kind="bar")
+plt.title("Subject-wise Class Performance Summary")
+plt.xlabel("Subjects")
+plt.ylabel("Average Score")
+plt.show()
+
+# Parental satisfaction and involvement summary
+parental_satisfaction_avg = merged_data["Parent_Satisfaction"].mean()
+parental_involvement_avg = merged_data["Parent_Involvement"].mean()
+
+plt.figure()
+plt.bar(["Parental Satisfaction", "Parental Involvement"], [parental_satisfaction_avg, parental_involvement_avg])
+plt.title("Parental Survey Summary")
+plt.xlabel("Survey Aspect")
+plt.ylabel("Average Rating")
+plt.ylim(0, 5)
+plt.show()
+
+# Teacher survey comments and rating summary
+teacher_comments = teacher_survey_data["Teacher_Comments"].dropna()
+teacher_rating_avg = teacher_survey_data["Teacher_Rating"].mean()
+
+plt.figure()
+plt.hist(teacher_comments, bins=10, edgecolor="black")
+plt.title("Teacher Survey - Comments")
+plt.xlabel("Comments")
+plt.ylabel("Count")
+plt.xticks(rotation=45, ha="right")
+plt.show()
+
+plt.figure()
+plt.bar(["Teacher Rating"], [teacher_rating_avg])
+plt.title("Teacher Survey - Rating")
+plt.xlabel("Survey Aspect")
+plt.ylabel("Average Rating")
+plt.ylim(0, 5)
+plt.show()
